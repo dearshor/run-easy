@@ -16,25 +16,81 @@
 					<artifactId>appassembler-maven-plugin</artifactId>
 					<version>1.1.1</version>
 				</plugin>
+				<plugin>
+					<artifactId>maven-assembly-plugin</artifactId>
+					<version>2.2.1</version>
+				</plugin>
 			</plugins>
 		</pluginManagement>
+
 	</build>
 	<profiles>
 		<profile>
 			<id>hsqldb-server</id>
+			<activation>
+				<property>
+					<name>app</name>
+					<value>hsqldbsrv</value>
+				</property>
+			</activation>
+			<dependencies>
+				<dependency>
+					<groupId>org.hsqldb</groupId>
+					<artifactId>hsqldb</artifactId>
+				</dependency>
+			</dependencies>
 			<build>
+				<finalName>hsqldb-server-${hsqldb.version}</finalName>
 				<plugins>
 					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>appassembler-maven-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>assemble-app</id>
+								<phase>package</phase>
+								<goals>
+									<goal>assemble</goal>
+								</goals>
+								<configuration>
+									<programs>
+										<program>
+											<mainClass>org.hsqldb.server.Server</mainClass>
+											<name>hsqldb.server.startup</name>
+										</program>
+									</programs>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>assemble-app</id>
+			<activation>
+				<property>
+					<name>app</name>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-assembly-plugin</artifactId>
 						<configuration>
-							<programs>
-								<program>
-									<mainClass>org.hsqldb.server.Server</mainClass>
-									<name>hsqldb.server.startup</name>
-								</program>
-							</programs>
+							<descriptors>
+								<descriptor>src/main/assembly/app.xml</descriptor>
+							</descriptors>
 						</configuration>
+						<executions>
+							<execution>
+								<id>make-assembly</id>
+								<phase>package</phase> 
+								<goals>
+									<goal>single</goal>
+								</goals>
+							</execution>
+						</executions>
 					</plugin>
 				</plugins>
 			</build>
@@ -45,18 +101,15 @@
 			<dependency>
 				<groupId>org.hsqldb</groupId>
 				<artifactId>hsqldb</artifactId>
-				<version>2.2.4</version>
+				<version>${hsqldb.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
-	<dependencies>
-		<dependency>
-			<groupId>org.hsqldb</groupId>
-			<artifactId>hsqldb</artifactId>
-		</dependency>
-	</dependencies>
-	
+
+
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		
+		<hsqldb.version>2.2.4</hsqldb.version>
 	</properties>
 </project>
