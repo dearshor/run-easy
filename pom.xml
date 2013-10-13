@@ -67,6 +67,47 @@
 			</build>
 		</profile>
 		<profile>
+			<id>h2-server</id>
+			<activation>
+				<property>
+					<name>app</name>
+					<value>h2srv</value>
+				</property>
+			</activation>
+			<dependencies>
+				<dependency>
+				    <groupId>com.h2database</groupId>
+				    <artifactId>h2</artifactId>
+				</dependency>
+			</dependencies>
+			<build>
+				<finalName>h2-server-${h2.version}</finalName>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>appassembler-maven-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>assemble-app</id>
+								<phase>package</phase>
+								<goals>
+									<goal>assemble</goal>
+								</goals>
+								<configuration>
+									<programs>
+										<program>
+											<mainClass>org.h2.tools.Server</mainClass>
+											<name>h2.server</name>
+										</program>
+									</programs>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
 			<id>assemble-app</id>
 			<activation>
 				<property>
@@ -103,12 +144,17 @@
 				<artifactId>hsqldb</artifactId>
 				<version>${hsqldb.version}</version>
 			</dependency>
+			<dependency>
+			    <groupId>com.h2database</groupId>
+			    <artifactId>h2</artifactId>
+			    <version>${h2.version}</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
-
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<hsqldb.version>2.3.0</hsqldb.version>
+		<h2.version>1.3.173</h2.version>
 	</properties>
 </project>
